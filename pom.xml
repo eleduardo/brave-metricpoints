@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   /*
+    *
+    *  Copyright 2019 Expedia, Inc.
+    *
+    *     Licensed under the Apache License, Version 2.0 (the "License");
+    *     you may not use this file except in compliance with the License.
+    *     You may obtain a copy of the License at
+    *
+    *         http://www.apache.org/licenses/LICENSE-2.0
+    *
+    *     Unless required by applicable law or agreed to in writing, software
+    *     distributed under the License is distributed on an "AS IS" BASIS,
+    *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    *     See the License for the specific language governing permissions and
+    *     limitations under the License.
+    *
+    */
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.expedia.www</groupId>
+    <artifactId>brave-metricpoints</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <!--<scm>-->
+        <!--<connection>scm:git:git://github.com/ExpediaDotCom/haystack-trends.git</connection>-->
+        <!--<developerConnection>scm:git:ssh://github.com/ExpediaDotCom/haystack-trends.git</developerConnection>-->
+        <!--<url>http://github.com/ExpediaDotCom/haystack-trends</url>-->
+    <!--</scm>-->
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description></description>
+    <url></url>
+
+    <licenses>
+        <!--
+           /*
+            *
+            *  Copyright 2017 Expedia, Inc.
+            *
+            *     Licensed under the Apache License, Version 2.0 (the "License");
+            *     you may not use this file except in compliance with the License.
+            *     You may obtain a copy of the License at
+            *
+            *         http://www.apache.org/licenses/LICENSE-2.0
+            *
+            *     Unless required by applicable law or agreed to in writing, software
+            *     distributed under the License is distributed on an "AS IS" BASIS,
+            *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+            *     See the License for the specific language governing permissions and
+            *     limitations under the License.
+            *
+            */
+          -->
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>haystack</id>
+            <name>Haystack Team</name>
+            <email>haystack@expedia.com</email>
+            <url>https://github.com/ExpediaDotCom/haystack</url>
+        </developer>
+    </developers>
+
+    <properties>
+
+        <!--Compiler Properties -->
+        <project.jdk.version>1.8</project.jdk.version>
+
+        <!--Plugin Properties -->
+        <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
+        <maven-enforcer-plugin.version>1.0</maven-enforcer-plugin.version>
+        <maven-scalastyle-plugin.version>0.9.0</maven-scalastyle-plugin.version>
+
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+
+        <skipGpg>true</skipGpg>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave</artifactId>
+            <version>5.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter</artifactId>
+            <version>2.7.13</version>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-sender-urlconnection</artifactId>
+            <version>2.7.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.2</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${nexus-staging-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${project.jdk.version}</source>
+                    <target>${project.jdk.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <version>${maven-compiler-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <configuration>
+                    <skip>${skipGpg}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+</project>
