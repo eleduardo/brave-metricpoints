@@ -32,9 +32,11 @@ public class SkeletalSpanFinishedHandler extends FinishedSpanHandler {
 
         zipkin2.Span.Builder builder = zipkin2.Span.newBuilder()
                 .traceId(traceContext.traceIdString())
-                .parentId(traceContext.isLocalRoot() ? null : traceContext.localRootIdString()) // rewrite the parent ID
+                .parentId(traceContext.localRootIdString()) // rewrite the parent ID
                 .id(traceContext.spanIdString())
                 .name(mutableSpan.name())
+                .timestamp(mutableSpan.startTimestamp())
+                .duration(mutableSpan.finishTimestamp() - mutableSpan.startTimestamp())
                 .kind(zipkin2.Span.Kind.valueOf(mutableSpan.kind().name()))
                 .localEndpoint(Endpoint.newBuilder().serviceName(localServiceName).build());
 

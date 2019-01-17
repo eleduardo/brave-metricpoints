@@ -27,7 +27,7 @@
     <groupId>com.expedia.www</groupId>
     <artifactId>brave-metricpoints</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <!--<scm>-->
         <!--<connection>scm:git:git://github.com/ExpediaDotCom/haystack-trends.git</connection>-->
