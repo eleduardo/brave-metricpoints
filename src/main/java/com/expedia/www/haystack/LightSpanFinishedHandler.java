@@ -31,6 +31,7 @@ public class LightSpanFinishedHandler extends FinishedSpanHandler {
                 .traceId(traceContext.traceIdString())
                 .parentId(traceContext.parentIdString())
                 .id(traceContext.spanIdString())
+                .shared(mutableSpan.shared())
                 .name(mutableSpan.name())
                 .timestamp(mutableSpan.startTimestamp())
                 .duration(mutableSpan.finishTimestamp() - mutableSpan.startTimestamp())
