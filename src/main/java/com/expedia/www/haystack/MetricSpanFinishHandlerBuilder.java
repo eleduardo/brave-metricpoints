@@ -1,19 +1,19 @@
 package com.expedia.www.haystack;
 
 import brave.handler.FinishedSpanHandler;
+import java.io.Closeable;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import zipkin2.Span;
 import zipkin2.reporter.AsyncReporter;
-import zipkin2.reporter.Reporter;
 import zipkin2.reporter.Sender;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 
 @Slf4j
-public class MetricSpanFinishHandlerBuilder {
+public class MetricSpanFinishHandlerBuilder implements Closeable {
 
     private String localServiceName;
-    private Reporter<Span> reporter;
+    private AsyncReporter<Span> reporter;
 
     @Builder
     private MetricSpanFinishHandlerBuilder(String url, String localServiceName, Sender sender){
@@ -39,5 +39,9 @@ public class MetricSpanFinishHandlerBuilder {
 
     public FinishedSpanHandler build(){
         return new SkeletalSpanFinishedHandler(this.localServiceName, this.reporter);
+    }
+
+    @Override public void close() {
+        this.reporter.close();
     }
 }
