@@ -15,31 +15,31 @@ import zipkin2.reporter.Reporter;
  * The idea is to create a full fidelity stream of lightweight spans for
  * data derivation outside of just tracing.
  */
-public class SkeletalSpanFinishedHandler extends FinishedSpanHandler {
+public class LightSpanFinishedHandler extends FinishedSpanHandler {
 
     private String localServiceName;
     private Reporter<Span> delegate;
 
-    @Builder
-    SkeletalSpanFinishedHandler(String localserviceName, Reporter<Span> delegate){
+    @Builder LightSpanFinishedHandler(String localserviceName, Reporter<Span> delegate){
         this.localServiceName = localserviceName;
         this.delegate = delegate;
     }
 
     @java.lang.Override
     public boolean handle(TraceContext traceContext, MutableSpan mutableSpan) {
-        if (mutableSpan.kind() == null) return false; // skip local spans
-
         zipkin2.Span.Builder builder = zipkin2.Span.newBuilder()
                 .traceId(traceContext.traceIdString())
-                .parentId(traceContext.localRootIdString()) // rewrite the parent ID
+                .parentId(traceContext.parentIdString())
                 .id(traceContext.spanIdString())
+                .shared(mutableSpan.shared())
                 .name(mutableSpan.name())
                 .timestamp(mutableSpan.startTimestamp())
                 .duration(mutableSpan.finishTimestamp() - mutableSpan.startTimestamp())
-                .kind(zipkin2.Span.Kind.valueOf(mutableSpan.kind().name()))
                 .localEndpoint(Endpoint.newBuilder().serviceName(localServiceName).build());
 
+        if (mutableSpan.kind() != null) {
+            builder.kind(zipkin2.Span.Kind.valueOf(mutableSpan.kind().name()));
+        }
         if (mutableSpan.error() != null || mutableSpan.tag("error") != null) {
             builder.putTag("error", ""); // linking counts errors: the value isn't important
         }
@@ -48,7 +48,7 @@ public class SkeletalSpanFinishedHandler extends FinishedSpanHandler {
         }
 
         delegate.report(builder.build());
-        return false; // end of the line
+        return true; // allow normal zipkin to accept the same span
     }
 
 }

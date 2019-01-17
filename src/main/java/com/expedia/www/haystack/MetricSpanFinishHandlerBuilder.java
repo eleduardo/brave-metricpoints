@@ -38,7 +38,7 @@ public class MetricSpanFinishHandlerBuilder implements Closeable {
     }
 
     public FinishedSpanHandler build(){
-        return new SkeletalSpanFinishedHandler(this.localServiceName, this.reporter);
+        return new LightSpanFinishedHandler(this.localServiceName, this.reporter);
     }
 
     @Override public void close() {
