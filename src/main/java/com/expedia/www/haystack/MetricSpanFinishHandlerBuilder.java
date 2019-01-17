@@ -38,6 +38,6 @@ public class MetricSpanFinishHandlerBuilder {
     }
 
     public FinishedSpanHandler build(){
-        return new SkeletalSpanFinishedHandler(this.localServiceName, this.reporter);
+        return new LightSpanFinishedHandler(this.localServiceName, this.reporter);
     }
 }
