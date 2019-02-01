@@ -1,4 +1,4 @@
-package com.expedia.www.haystack;
+package com.zipkin.metrics;
 
 import brave.ScopedSpan;
 import brave.Span;
@@ -24,14 +24,14 @@ import zipkin2.reporter.Reporter;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LightSpanFinishedHandlerTest {
+public class MetricSpanFinishedHandlerTest {
   @Rule public ZipkinRule http = new ZipkinRule();
 
-  LightSpanFinishedHandler handler1 = LightSpanFinishedHandler.newBuilder()
+  MetricSpanFinishedHandler handler1 = MetricSpanFinishedHandler.newBuilder()
       .localServiceName("server1")
       .endpoint(http.httpUrl() + "/api/v2/spans").build();
 
-  LightSpanFinishedHandler handler2 = LightSpanFinishedHandler.newBuilder()
+  MetricSpanFinishedHandler handler2 = MetricSpanFinishedHandler.newBuilder()
       .localServiceName("server2")
       .endpoint(http.httpUrl() + "/api/v2/spans").build();
 

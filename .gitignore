@@ -1,6 +1,19 @@
 .idea/
+**/*.iml
 
-target/
+**/.idea/
+**/*.iml
+**/target/
+**/logs/
+**/work/
+**/.DS_Store
+**/.editorconfig
+**/.project
+**/.settings
+**/.classpath
+**/*.swp
+**/bin
+
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup

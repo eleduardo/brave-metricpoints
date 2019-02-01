@@ -1,4 +1,4 @@
-package com.expedia.www.haystack;
+package com.zipkin.metrics;
 
 import brave.handler.FinishedSpanHandler;
 import brave.handler.MutableSpan;
@@ -10,12 +10,12 @@ import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 
 /**
- * This object will turn a full fledge span into a skinny one and tee it off to its own reporter.
- *
- * The idea is to create a full fidelity stream of lightweight spans for data derivation outside of
- * just tracing.
+ * This finish handler will skin down spans to the bare minimum needed to produce operational
+ * metrics out of the spans. It will send the span to the collection agent regardless of
+ * sampling, the proposed agent at this point is 'pitchfork'. The agent should be separate from the
+ * regular tracing collection point although it follows the same API and uses the same reporter.
  */
-public final class LightSpanFinishedHandler extends FinishedSpanHandler implements Closeable {
+public final class MetricSpanFinishedHandler extends FinishedSpanHandler implements Closeable {
 
   public static Builder newBuilder() {
     return new Builder();
@@ -23,6 +23,8 @@ public final class LightSpanFinishedHandler extends FinishedSpanHandler implemen
 
   public static final class Builder {
     String localServiceName, endpoint;
+
+    AsyncReporter<Span> reporter = null;
 
     public final Builder localServiceName(String localServiceName) {
       if (localServiceName == null) throw new NullPointerException("localServiceName == null");
@@ -36,8 +38,14 @@ public final class LightSpanFinishedHandler extends FinishedSpanHandler implemen
       return this;
     }
 
-    public final LightSpanFinishedHandler build() {
-      return new LightSpanFinishedHandler(this);
+    public final Builder reporter(AsyncReporter<Span> reporter){
+      if (reporter==null) throw new NullPointerException("reporter == null");
+      this.reporter = reporter;
+      return this;
+    }
+
+    public final MetricSpanFinishedHandler build() {
+      return new MetricSpanFinishedHandler(this);
     }
 
     Builder() {
@@ -45,14 +53,21 @@ public final class LightSpanFinishedHandler extends FinishedSpanHandler implemen
   }
 
   final String localServiceName;
-  final AsyncReporter<Span> asyncReporter;
+  final AsyncReporter<Span> spanReporter;
 
-  LightSpanFinishedHandler(Builder builder) {
+  MetricSpanFinishedHandler(Builder builder) {
     if (builder.localServiceName == null) {
       throw new NullPointerException("localServiceName == null");
     }
     this.localServiceName = builder.localServiceName;
-    this.asyncReporter = AsyncReporter.create(URLConnectionSender.create(builder.endpoint));
+    if (builder.reporter != null){
+      this.spanReporter = builder.reporter;
+    }else {
+      if (builder.endpoint == null){
+        throw new NullPointerException("endpoint == null");
+      }
+      this.spanReporter = AsyncReporter.create(URLConnectionSender.create(builder.endpoint));
+    }
   }
 
   @Override public boolean alwaysSampleLocal() {
@@ -81,11 +96,11 @@ public final class LightSpanFinishedHandler extends FinishedSpanHandler implemen
           Endpoint.newBuilder().serviceName(mutableSpan.remoteServiceName()).build());
     }
 
-    asyncReporter.report(builder.build());
+    spanReporter.report(builder.build());
     return true; // allow normal zipkin to accept the same span
   }
 
   @Override public void close() {
-    asyncReporter.close();
+    spanReporter.close();
   }
 }
